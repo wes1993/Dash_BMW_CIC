@@ -2,7 +2,8 @@
 
 bool BmwF10::init(ICANBus* canbus){
     if (this->arbiter) {
-        this->debug = new DebugWindow(*this->arbiter);        
+        this->debug = new DebugWindow(*this->arbiter);
+        F10_LOG(info)<<"loading plugin...";
         canbus->registerFrameHandler(0x264, [this](QByteArray payload){this->monitorIdriveRotaryStatus(payload);});
         canbus->registerFrameHandler(0x267, [this](QByteArray payload){this->monitorIdriveButtonStatus(payload);});
         canbus->registerFrameHandler(0x21A, [this](QByteArray payload){this->monitorGearStatus(payload);});
@@ -31,17 +32,17 @@ void BmwF10::monitorIdriveRotaryStatus(QByteArray payload){
         this->rotaryPrevPos = this->rotaryPos;
         this->rotaryPos = payload.at(4)*256 + payload.at(3);
         // message.data[4] * 256 + message.data[3]
-        if (c < c0 && c0 != -1) {
+        if (this->rotaryPos < this->rotaryPrevPos && this->rotaryPrevPos != -1) {
             // rotate counter clockwise
-            this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL);
-            F10_LOG(info)<<f"Rotate counter clockwise";
-        } else if (c > c0 && c0 != -1) {
+            // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL);
+            F10_LOG(info)<<"Rotate counter clockwise";
+        } else if (this->rotaryPos > this->rotaryPrevPos && this->rotaryPrevPos != -1) {
             // rotate clockwise
-            this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL);
-            F10_LOG(info)<<f"Rotate clockwise";
+            // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL);
+            F10_LOG(info)<<"Rotate clockwise";
         }
-        this->debug->rotaryPrevPos->setText(QString::number((uint16_t)this->rotaryPrevPos));
-        this->debug->rotaryPos->setText(QString::number((uint16_t)this->rotaryPos));        
+        // this->debug->rotaryPrevPos->setText(QString::number((uint16_t)this->rotaryPrevPos));
+        // this->debug->rotaryPos->setText(QString::number((uint16_t)this->rotaryPos));
     }
 }
 
@@ -52,37 +53,37 @@ void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
         if(payload.at(3) == 0x00 && payload.at(4) == 0xDD && this->lastKey){
             // Release
             this->arbiter->send_openauto_button_press(this->lastKey);
-            F10_LOG(info)<<f"Release";
+            F10_LOG(info)<<"Release";
             this->debug->lastKey->setText(QString("Release"));
-            this->lastKey = 0x00;
+            this->lastKey = aasdk::proto::enums::ButtonCode::NONE;
         } else if(payload.at(3) == 0x01 && payload.at(4) == 0xDE){
             // Enter
             this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::ENTER);
-            F10_LOG(info)<<f"Enter";
-            this->debug->lastKey->setText(QString('Enter'));
+            F10_LOG(info)<<"Enter";
+            this->debug->lastKey->setText(QString("Enter"));
         } else if(payload.at(3) == 0x11 && payload.at(4) == 0xDD){
             // UP
             this->lastKey = aasdk::proto::enums::ButtonCode::UP;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::UP);
-            F10_LOG(info)<<f"Up";
-            this->debug->lastKey->setText(QString('Up'));
+            F10_LOG(info)<<"Up";
+            this->debug->lastKey->setText(QString("Up"));
         } else if(payload.at(3) == 0x12 && payload.at(4) == 0xDD){
             // UP hold
             this->lastKey = aasdk::proto::enums::ButtonCode::BACK;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::BACK);
-            F10_LOG(info)<<f"Up Hold >> Back";
+            F10_LOG(info)<<"Up Hold >> Back";
             this->debug->lastKey->setText(QString("Up Hold >> Back"));
-        } else (payload.at(3) == 0x41 && payload.at(4) == 0xDD){
+        } else if(payload.at(3) == 0x41 && payload.at(4) == 0xDD){
             // DOWN
             this->lastKey = aasdk::proto::enums::ButtonCode::DOWN;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::DOWN);
-            F10_LOG(info)<<f"Down";
-            this->debug->lastKey->setText(QString('Down'));
+            F10_LOG(info)<<"Down";
+            this->debug->lastKey->setText(QString("Down"));
         } else if(payload.at(3) == 0x42 && payload.at(4) == 0xDD){
             // DOWN hold
             this->lastKey = aasdk::proto::enums::ButtonCode::HOME;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::HOME);
-            F10_LOG(info)<<f"Down Hold >> Home";
+            F10_LOG(info)<<"Down Hold >> Home";
             this->debug->lastKey->setText(QString("Down Hold >> HOME"));
         }
         this->debug->msgCounter->setText(QString::number((uint8_t)this->msgCounter));
@@ -91,14 +92,13 @@ void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
 
 void BmwF10::monitorGearStatus(QByteArray payload){
     if(payload.at(1)%2 == 1 && !this->inReverse){
-        F10_LOG(info)<<f"Reverse Gear";
-        this->debug->inReverse->setText(QString('Yes'));
-        this->arbiter.set_curr_page(3);
-    }
-    else if(payload.at(1)%2 == 0 && this->inReverse){
-        F10_LOG(info)<<f"Not reverse";
-        this->debug->inReverse->setText(QString('No'));
-        this->arbiter.set_curr_page(this->arbiter.layout().openauto_page);
+        F10_LOG(info)<<"Reverse Gear";
+        this->debug->inReverse->setText(QString("Yes"));
+        this->arbiter->set_curr_page(3);
+    } else if(payload.at(1)%2 == 0 && this->inReverse){
+        F10_LOG(info)<<"Not reverse";
+        this->debug->inReverse->setText(QString("No"));
+        this->arbiter->set_curr_page(this->arbiter->layout().openauto_page);
     }
 }
 

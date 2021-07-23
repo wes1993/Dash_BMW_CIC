@@ -39,7 +39,7 @@ class BmwF10 : public QObject, VehiclePlugin
         int rotaryPrevPos = -1;
         int rotaryPos = -1;
         unsigned short int msgCounter = 0;
-        int lastKey;
+        aasdk::proto::enums::ButtonCode::Enum lastKey = aasdk::proto::enums::ButtonCode::NONE;
 
         void monitorIdriveRotaryStatus(QByteArray payload);
         void monitorIdriveButtonStatus(QByteArray payload);
