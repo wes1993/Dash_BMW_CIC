@@ -9,3 +9,8 @@ Current functionality:
 * Reverse camera activation when gear shifter in Reverse.
 
 It is likely that this plugin works with other years of F01/F07F10/F11 or even across the BMW lines. However I make no garuntees.
+
+h3. Installation 
+
+# Put files into dash/plugins/vehicle folder
+# run install.sh --dash
