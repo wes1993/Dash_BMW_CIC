@@ -1,19 +1,11 @@
-# Dash_InfinitiG37
+# Dash_BmwF10_Idrive integration
 
-This repo contains a Vehicle Plugin for [Dash](https://github.com/OpenDsh/dash/) to support a 2011 InfinitiG37.
+This repo contains a Vehicle Plugin for [Dash](https://github.com/OpenDsh/dash/) to support a 2010 BMW F10.
 
 Current functionality:
 
-* Automatic day/night theme switching based on the headlight status of the car
-* HVAC/Climate Integration (read only)
+* Idrive rotary input to scroll OpenAuto UI
+* Idrive left/right/up/down/press to simulate OpenAuto UI keyboard input
+* Reverse camera activation when gear shifter in Reverse.
 
-
-
-This repo also contains a .dbc file that I use for reverse engineering the signals of the G37 from within my fork of [Cabana](https://github.com/icecube45/cabana)
-
-
-
-It is likely that this plugin works with other years of G37, or even across the Nissan/Infiniti lines. However I make no garuntees.
-
-
-
+It is likely that this plugin works with other years of F01/F07F10/F11 or even across the BMW lines. However I make no garuntees.
