@@ -12,7 +12,7 @@ It is likely that this plugin works with other years of F01/F07F10/F11 or even a
 
 # Installation
 
-* Checkout repository to dash/plugins/vehicle folder
+* Checkout repository to [dash/plugins/vehicle](https://github.com/openDsh/dash/tree/develop/plugins/vehicle) folder
 
 ```
 $ cd ~/dash/plugins/vehicle
