@@ -50,7 +50,7 @@ void BmwF10::monitorIdriveRotaryStatus(QByteArray payload){
 // and message.data[0] == 0xE1 and message.data[1] == 0x0FD and message.data[2] > c2):
 void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
     if(payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(2) > this->msgCounter) {
-        if(payload.at(3) == 0x00 && payload.at(4) == 0xDD && this->lastKey != aasdk::proto::enums::ButtonCode::NONE){
+        if(payload.at(3) == 0x00 && (payload.at(4) == 0xDD || payload.at(4) == 0xDE) && this->lastKey != aasdk::proto::enums::ButtonCode::NONE){
             // Release
             this->arbiter->send_openauto_button_press(this->lastKey);
             // F10_LOG(info)<<"Release";
@@ -58,33 +58,33 @@ void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
             this->lastKey = aasdk::proto::enums::ButtonCode::NONE;
         } else if(payload.at(3) == 0x01 && payload.at(4) == 0xDE){
             // Enter
-            this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::ENTER);
+	        this->lastKey = aasdk::proto::enums::ButtonCode::ENTER;
             // F10_LOG(info)<<"Enter";
-            // this->debug->lastKey->setText(QString("Enter"));
+            this->debug->lastKey->setText(QString("Enter"));
         } else if(payload.at(3) == 0x11 && payload.at(4) == 0xDD){
             // UP
             this->lastKey = aasdk::proto::enums::ButtonCode::UP;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::UP);
             // F10_LOG(info)<<"Up";
-            // this->debug->lastKey->setText(QString("Up"));
+            this->debug->lastKey->setText(QString("Up"));
         } else if(payload.at(3) == 0x12 && payload.at(4) == 0xDD){
             // UP hold
             this->lastKey = aasdk::proto::enums::ButtonCode::BACK;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::BACK);
             // F10_LOG(info)<<"Up Hold >> Back";
-            // this->debug->lastKey->setText(QString("Up Hold >> Back"));
+            this->debug->lastKey->setText(QString("Up Hold >> Back"));
         } else if(payload.at(3) == 0x41 && payload.at(4) == 0xDD){
             // DOWN
             this->lastKey = aasdk::proto::enums::ButtonCode::DOWN;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::DOWN);
             // F10_LOG(info)<<"Down";
-            // this->debug->lastKey->setText(QString("Down"));
+            this->debug->lastKey->setText(QString("Down"));
         } else if(payload.at(3) == 0x42 && payload.at(4) == 0xDD){
             // DOWN hold
             this->lastKey = aasdk::proto::enums::ButtonCode::HOME;
             // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::HOME);
             // F10_LOG(info)<<"Down Hold >> Home";
-            // this->debug->lastKey->setText(QString("Down Hold >> HOME"));
+            this->debug->lastKey->setText(QString("Down Hold >> HOME"));
         }
         //this->debug->msgCounter->setText(QString::number((uint8_t)this->msgCounter));
     }
@@ -92,13 +92,15 @@ void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
 
 void BmwF10::monitorGearStatus(QByteArray payload){
     if(payload.at(1)%2 == 1 && !this->inReverse){
-        // F10_LOG(info)<<"Reverse Gear";
-        // this->debug->inReverse->setText(QString("Yes"));
+        F10_LOG(info)<<"Reverse Gear";
+        this->debug->inReverse->setText(QString("Yes"));
+	    this->inReverse = true;
         this->arbiter->set_curr_page(3);
     } else if(payload.at(1)%2 == 0 && this->inReverse){
-        // F10_LOG(info)<<"Not reverse";
-        // this->debug->inReverse->setText(QString("No"));
-        this->arbiter->set_curr_page(this->arbiter->layout().openauto_page);
+	    F10_LOG(info)<<"Not reverse";
+        this->debug->inReverse->setText(QString("No"));
+	    this->inReverse = false;
+        this->arbiter->set_curr_page(0);
     }
 }
 
@@ -124,17 +126,17 @@ DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
     layout->addWidget(inReverse);
     layout->addWidget(Session::Forge::br(false));
 
-    layout->addWidget(textTwo);
-    layout->addWidget(rotaryPrevPos);
-    layout->addWidget(Session::Forge::br(false));
+    // layout->addWidget(textTwo);
+    // layout->addWidget(rotaryPrevPos);
+    // layout->addWidget(Session::Forge::br(false));
 
-    layout->addWidget(textThree);
-    layout->addWidget(rotaryPos);
-    layout->addWidget(Session::Forge::br(false));
+    // layout->addWidget(textThree);
+    // layout->addWidget(rotaryPos);
+    // layout->addWidget(Session::Forge::br(false));
 
-    layout->addWidget(textFour);
-    layout->addWidget(msgCounter);
-    layout->addWidget(Session::Forge::br(false));
+    // layout->addWidget(textFour);
+    // layout->addWidget(msgCounter);
+    // layout->addWidget(Session::Forge::br(false));
 
     layout->addWidget(textFive);
     layout->addWidget(lastKey);
