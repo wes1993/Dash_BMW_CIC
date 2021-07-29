@@ -95,12 +95,18 @@ void BmwF10::monitorGearStatus(QByteArray payload){
         F10_LOG(info)<<"Reverse Gear";
         this->debug->inReverse->setText(QString("Yes"));
 	    this->inReverse = true;
+        if(this->arbiter.layout().openauto_page->is_fullscreen()){
+            this->arbiter.layout().openauto_page->toggle_fullscreen();
+        }
         this->arbiter->set_curr_page(3);
     } else if(payload.at(1)%2 == 0 && this->inReverse){
 	    F10_LOG(info)<<"Not reverse";
         this->debug->inReverse->setText(QString("No"));
 	    this->inReverse = false;
         this->arbiter->set_curr_page(0);
+        if(!this->arbiter.layout().openauto_page->is_fullscreen()){
+            this->arbiter.layout().openauto_page->toggle_fullscreen();
+        }        
     }
 }
 
