@@ -95,18 +95,14 @@ void BmwF10::monitorGearStatus(QByteArray payload){
         F10_LOG(info)<<"Reverse Gear";
         this->debug->inReverse->setText(QString("Yes"));
 	    this->inReverse = true;
-        if(this->arbiter.layout().openauto_page->is_fullscreen()){
-            this->arbiter.layout().openauto_page->toggle_fullscreen();
-        }
+        this->arbiter->send_openauto_full_screen(false);
         this->arbiter->set_curr_page(3);
     } else if(payload.at(1)%2 == 0 && this->inReverse){
 	    F10_LOG(info)<<"Not reverse";
         this->debug->inReverse->setText(QString("No"));
 	    this->inReverse = false;
         this->arbiter->set_curr_page(0);
-        if(!this->arbiter.layout().openauto_page->is_fullscreen()){
-            this->arbiter.layout().openauto_page->toggle_fullscreen();
-        }        
+        this->arbiter->send_openauto_full_screen();
     }
 }
 
@@ -115,15 +111,15 @@ DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
     this->setObjectName("IdriveDebug");
 
     QLabel* textOne = new QLabel("In Reverse", this);
-    QLabel* textTwo = new QLabel("Rotary Prev Pos", this);
-    QLabel* textThree = new QLabel("Rotary Pos", this);
-    QLabel* textFour = new QLabel("Message Counter", this);
+    // QLabel* textTwo = new QLabel("Rotary Prev Pos", this);
+    // QLabel* textThree = new QLabel("Rotary Pos", this);
+    // QLabel* textFour = new QLabel("Message Counter", this);
     QLabel* textFive = new QLabel("Last Key", this);
 
     inReverse = new QLabel("No", this);
-    rotaryPrevPos = new QLabel("--", this);
-    rotaryPos = new QLabel("--", this);
-    msgCounter = new QLabel("--", this);
+    // rotaryPrevPos = new QLabel("--", this);
+    // rotaryPos = new QLabel("--", this);
+    // msgCounter = new QLabel("--", this);
     lastKey = new QLabel("--", this);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
