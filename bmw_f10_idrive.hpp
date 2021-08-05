@@ -16,7 +16,7 @@ class DebugWindow : public QWidget {
     public:
         DebugWindow(Arbiter &arbiter, QWidget *parent = nullptr);
         QLabel* inReverse;
-        QLabel* rotaryPrevPos;
+        QLabel* rpm;
         QLabel* rotaryPos;
         QLabel* msgCounter;
         QLabel* lastKey;
@@ -44,6 +44,7 @@ class BmwF10 : public QObject, VehiclePlugin
         void monitorIdriveRotaryStatus(QByteArray payload);
         void monitorIdriveButtonStatus(QByteArray payload);
         void monitorGearStatus(QByteArray payload);
+        void monitorEngineRPM(QByteArray payload);
 
         DebugWindow *debug;
 };

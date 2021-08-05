@@ -7,6 +7,7 @@ bool BmwF10::init(ICANBus* canbus){
         canbus->registerFrameHandler(0x264, [this](QByteArray payload){this->monitorIdriveRotaryStatus(payload);});
         canbus->registerFrameHandler(0x267, [this](QByteArray payload){this->monitorIdriveButtonStatus(payload);});
         canbus->registerFrameHandler(0x21A, [this](QByteArray payload){this->monitorGearStatus(payload);});
+        canbus->registerFrameHandler(0x0A5, [this](QByteArray payload){this->monitorEngineRPM(payload);});
         F10_LOG(info)<<"loaded successfully";
         return true;
     }
@@ -106,18 +107,26 @@ void BmwF10::monitorGearStatus(QByteArray payload){
     }
 }
 
+void BmwF10::monitorEngineRPM(QByteArray payload){
+    F10_LOG(info)<<"RPM";
+    int rpm = ((256.0 * (int)payload.at(6)) + (int)payload.at(5)) / 4.0;
+    F10_LOG(info)<<"RPM"<<std::to_string(rpm);
+    this->debug->rpm->setText(QString::number(rpm));
+    // this->arbiter->set_curr_page(0);
+}
+
 DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
 {
     this->setObjectName("IdriveDebug");
 
     QLabel* textOne = new QLabel("In Reverse", this);
-    // QLabel* textTwo = new QLabel("Rotary Prev Pos", this);
+    QLabel* textTwo = new QLabel("RPM", this);
     // QLabel* textThree = new QLabel("Rotary Pos", this);
     // QLabel* textFour = new QLabel("Message Counter", this);
     QLabel* textFive = new QLabel("Last Key", this);
 
     inReverse = new QLabel("No", this);
-    // rotaryPrevPos = new QLabel("--", this);
+    rpm = new QLabel("--", this);
     // rotaryPos = new QLabel("--", this);
     // msgCounter = new QLabel("--", this);
     lastKey = new QLabel("--", this);
@@ -128,9 +137,9 @@ DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
     layout->addWidget(inReverse);
     layout->addWidget(Session::Forge::br(false));
 
-    // layout->addWidget(textTwo);
-    // layout->addWidget(rotaryPrevPos);
-    // layout->addWidget(Session::Forge::br(false));
+    layout->addWidget(textTwo);
+    layout->addWidget(rpm);
+    layout->addWidget(Session::Forge::br(false));
 
     // layout->addWidget(textThree);
     // layout->addWidget(rotaryPos);
