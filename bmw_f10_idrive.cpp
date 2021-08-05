@@ -8,6 +8,7 @@ bool BmwF10::init(ICANBus* canbus){
         canbus->registerFrameHandler(0x267, [this](QByteArray payload){this->monitorIdriveButtonStatus(payload);});
         canbus->registerFrameHandler(0x21A, [this](QByteArray payload){this->monitorGearStatus(payload);});
         canbus->registerFrameHandler(0x0A5, [this](QByteArray payload){this->monitorEngineRPM(payload);});
+        canbus->registerFrameHandler(0x1A1, [this](QByteArray payload){this->monitorVehicleSpeed(payload);});
         F10_LOG(info)<<"loaded successfully";
         return true;
     }
@@ -108,11 +109,17 @@ void BmwF10::monitorGearStatus(QByteArray payload){
 }
 
 void BmwF10::monitorEngineRPM(QByteArray payload){
-    F10_LOG(info)<<"RPM";
     int rpm = ((256.0 * (int)payload.at(6)) + (int)payload.at(5)) / 4.0;
-    F10_LOG(info)<<"RPM"<<std::to_string(rpm);
+    F10_LOG(info)<<"RPM: "<<std::to_string(rpm);
     this->debug->rpm->setText(QString::number(rpm));
-    // this->arbiter->set_curr_page(0);
+    this->arbiter->vehicle_update_data("rpm", rpm);
+}
+
+void BmwF10::monitorVehicleSpeed(QByteArray payload){
+    int speed = ((256.0 * (int)payload.at(3)) + (int)payload.at(2)) / 100.0;
+    F10_LOG(info)<<"Speed: "<<std::to_string(speed);
+    // this->debug->speed->setText(QString::number(speed));
+    this->arbiter->vehicle_update_data("speed", speed);
 }
 
 DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)

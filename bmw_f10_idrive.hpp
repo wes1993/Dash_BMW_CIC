@@ -45,6 +45,7 @@ class BmwF10 : public QObject, VehiclePlugin
         void monitorIdriveButtonStatus(QByteArray payload);
         void monitorGearStatus(QByteArray payload);
         void monitorEngineRPM(QByteArray payload);
+        void monitorVehicleSpeed(QByteArray payload);
 
         DebugWindow *debug;
 };
