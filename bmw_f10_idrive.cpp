@@ -116,7 +116,7 @@ void BmwF10::monitorEngineRPM(QByteArray payload){
 }
 
 void BmwF10::monitorVehicleSpeed(QByteArray payload){
-    int speed = ((256.0 * (int)payload.at(3)) + (int)payload.at(2)) / 100.0;
+    int speed = ((256.0 * (int)payload.at(3)) + (int)payload.at(2)) * 1.609344 / 100.0;
     F10_LOG(info)<<"Speed: "<<std::to_string(speed);
     // this->debug->speed->setText(QString::number(speed));
     this->arbiter->vehicle_update_data("speed", speed);
