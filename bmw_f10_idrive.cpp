@@ -37,14 +37,13 @@ void BmwF10::monitorIdriveRotaryStatus(QByteArray payload){
         if (this->rotaryPos < this->rotaryPrevPos && this->rotaryPrevPos != -1) {
             // rotate counter clockwise
             this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL, openauto::projection::WheelDirection::LEFT);
-            // F10_LOG(info)<<"Rotate counter clockwise";
+            F10_LOG(info)<<"Rotate counter clockwise";
         } else if (this->rotaryPos > this->rotaryPrevPos && this->rotaryPrevPos != -1) {
             // rotate clockwise
             this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL, openauto::projection::WheelDirection::RIGHT);
-            // F10_LOG(info)<<"Rotate clockwise";
+            F10_LOG(info)<<"Rotate clockwise";
         }
-        // this->debug->rotaryPrevPos->setText(QString::number((uint16_t)this->rotaryPrevPos));
-        // this->debug->rotaryPos->setText(QString::number((uint16_t)this->rotaryPos));
+        this->debug->rotaryPos->setText(QString::number(this->rotaryPos));
     }
 }
 
@@ -55,40 +54,29 @@ void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
         if(payload.at(3) == 0x00 && (payload.at(4) == 0xDD || payload.at(4) == 0xDE) && this->lastKey != aasdk::proto::enums::ButtonCode::NONE){
             // Release
             this->arbiter->send_openauto_button_press(this->lastKey);
-            // F10_LOG(info)<<"Release";
-            // this->debug->lastKey->setText(QString("Release"));
             this->lastKey = aasdk::proto::enums::ButtonCode::NONE;
         } else if(payload.at(3) == 0x01 && payload.at(4) == 0xDE){
             // Enter
 	        this->lastKey = aasdk::proto::enums::ButtonCode::ENTER;
-            // F10_LOG(info)<<"Enter";
             this->debug->lastKey->setText(QString("Enter"));
         } else if(payload.at(3) == 0x11 && payload.at(4) == 0xDD){
             // UP
             this->lastKey = aasdk::proto::enums::ButtonCode::UP;
-            // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::UP);
-            // F10_LOG(info)<<"Up";
             this->debug->lastKey->setText(QString("Up"));
         } else if(payload.at(3) == 0x12 && payload.at(4) == 0xDD){
             // UP hold
             this->lastKey = aasdk::proto::enums::ButtonCode::BACK;
-            // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::BACK);
-            // F10_LOG(info)<<"Up Hold >> Back";
             this->debug->lastKey->setText(QString("Up Hold >> Back"));
         } else if(payload.at(3) == 0x41 && payload.at(4) == 0xDD){
             // DOWN
             this->lastKey = aasdk::proto::enums::ButtonCode::DOWN;
-            // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::DOWN);
-            // F10_LOG(info)<<"Down";
             this->debug->lastKey->setText(QString("Down"));
         } else if(payload.at(3) == 0x42 && payload.at(4) == 0xDD){
             // DOWN hold
             this->lastKey = aasdk::proto::enums::ButtonCode::HOME;
-            // this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::HOME);
-            // F10_LOG(info)<<"Down Hold >> Home";
             this->debug->lastKey->setText(QString("Down Hold >> HOME"));
         }
-        //this->debug->msgCounter->setText(QString::number((uint8_t)this->msgCounter));
+        // this->debug->msgCounter->setText(QString::number(this->msgCounter));
     }
 }
 
@@ -110,14 +98,14 @@ void BmwF10::monitorGearStatus(QByteArray payload){
 
 void BmwF10::monitorEngineRPM(QByteArray payload){
     int rpm = ((256.0 * (int)payload.at(6)) + (int)payload.at(5)) / 4.0;
-    F10_LOG(info)<<"RPM: "<<std::to_string(rpm);
+    // F10_LOG(info)<<"RPM: "<<std::to_string(rpm);
     this->debug->rpm->setText(QString::number(rpm));
     this->arbiter->vehicle_update_data("rpm", rpm);
 }
 
 void BmwF10::monitorVehicleSpeed(QByteArray payload){
     int speed = ((256.0 * (int)payload.at(3)) + (int)payload.at(2)) * 1.609344 / 100.0;
-    F10_LOG(info)<<"Speed: "<<std::to_string(speed);
+    // F10_LOG(info)<<"Speed: "<<std::to_string(speed);
     // this->debug->speed->setText(QString::number(speed));
     this->arbiter->vehicle_update_data("speed", speed);
 }
@@ -128,13 +116,13 @@ DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
 
     QLabel* textOne = new QLabel("In Reverse", this);
     QLabel* textTwo = new QLabel("RPM", this);
-    // QLabel* textThree = new QLabel("Rotary Pos", this);
+    QLabel* textThree = new QLabel("Rotary Pos", this);
     // QLabel* textFour = new QLabel("Message Counter", this);
     QLabel* textFive = new QLabel("Last Key", this);
 
     inReverse = new QLabel("No", this);
     rpm = new QLabel("--", this);
-    // rotaryPos = new QLabel("--", this);
+    rotaryPos = new QLabel("--", this);
     // msgCounter = new QLabel("--", this);
     lastKey = new QLabel("--", this);
 
@@ -148,9 +136,9 @@ DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
     layout->addWidget(rpm);
     layout->addWidget(Session::Forge::br(false));
 
-    // layout->addWidget(textThree);
-    // layout->addWidget(rotaryPos);
-    // layout->addWidget(Session::Forge::br(false));
+    layout->addWidget(textThree);
+    layout->addWidget(rotaryPos);
+    layout->addWidget(Session::Forge::br(false));
 
     // layout->addWidget(textFour);
     // layout->addWidget(msgCounter);
