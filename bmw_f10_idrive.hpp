@@ -35,6 +35,8 @@ class BmwF10 : public QObject, VehiclePlugin
     private:
         QList<QWidget *> widgets() override;
 
+        ICANBus* canbus;
+        bool cic_fullscreen = false;
         bool inReverse = false;
         int rotaryPrevPos = -1;
         int rotaryPos = -1;
@@ -46,6 +48,10 @@ class BmwF10 : public QObject, VehiclePlugin
         void monitorGearStatus(QByteArray payload);
         void monitorEngineRPM(QByteArray payload);
         void monitorVehicleSpeed(QByteArray payload);
+        void monitorCicStatus(QByteArray payload);
+        void injectFrame(QByteArray payload);
+        void switchTVInput();
+        // QString toDebug(const QByteArray & line);
 
         DebugWindow *debug;
 };
