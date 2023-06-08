@@ -30,6 +30,8 @@ class BmwF10 : public QObject, VehiclePlugin
     Q_INTERFACES(VehiclePlugin)
 
     public:
+        BmwF10() {};
+        ~BmwF10();
         bool init(ICANBus* canbus) override;
 
     private:
