@@ -11,6 +11,7 @@ BmwF10::~BmwF10()
 bool BmwF10::init(ICANBus* canbus){
     F10_LOG(info)<<"loading plugin...";
     if (this->arbiter) {
+        this->aa_handler = this->arbiter->android_auto().handler;
         this->debug = new DebugWindow(*this->arbiter);
         this->canbus = canbus;
         canbus->registerFrameHandler(0x264, [this](QByteArray payload){this->monitorIdriveRotaryStatus(payload);});
@@ -55,11 +56,11 @@ void BmwF10::monitorIdriveRotaryStatus(QByteArray payload){
         // message.data[4] * 256 + message.data[3]
         if (this->rotaryPos < this->rotaryPrevPos && this->rotaryPrevPos != -1) {
             // rotate counter clockwise
-            this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL, openauto::projection::WheelDirection::LEFT);
+            this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL, openauto::projection::WheelDirection::LEFT);
             // F10_LOG(info)<<"Rotate counter clockwise";
         } else if (this->rotaryPos > this->rotaryPrevPos && this->rotaryPrevPos != -1) {
             // rotate clockwise
-            this->arbiter->send_openauto_button_press(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL, openauto::projection::WheelDirection::RIGHT);
+            this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::SCROLL_WHEEL, openauto::projection::WheelDirection::RIGHT);
             // F10_LOG(info)<<"Rotate clockwise";
         }
         this->debug->rotaryPos->setText(QString::number(this->rotaryPos));
@@ -80,7 +81,7 @@ void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
         if(payload.at(3) == 0x00 && this->lastKey != aasdk::proto::enums::ButtonCode::NONE){
             // Release
             // F10_LOG(info)<<"Idrive button release";
-            this->arbiter->send_openauto_button_press(this->lastKey);
+            this->aa_handler->injectButtonPress(this->lastKey);
             this->lastKey = aasdk::proto::enums::ButtonCode::NONE;
         // } else if(payload.at(3) == 0x01 && payload.at(4) == 0xDE){
         } else if(payload.at(3) == 0x11 && payload.at(4) == 0xDD){

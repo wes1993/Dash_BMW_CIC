@@ -7,6 +7,7 @@
 #include "plugins/vehicle_plugin.hpp"
 #include "app/arbiter.hpp"
 #include "openauto/Service/InputService.hpp"
+#include "AAHandler.hpp"
 
 #define F10_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[F10VehiclePlugin] "
 
@@ -55,5 +56,6 @@ class BmwF10 : public QObject, VehiclePlugin
         void switchTVInput();
         // QString toDebug(const QByteArray & line);
 
+        AAHandler *aa_handler;
         DebugWindow *debug;
 };
