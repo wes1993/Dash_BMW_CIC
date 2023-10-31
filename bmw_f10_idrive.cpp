@@ -25,8 +25,9 @@ bool BmwF10::init(ICANBus* canbus){
         // connected event was removed :(
         // auto *oaPage = this->arbiter->layout().openauto_page;
         // connect(oaPage, &OpenAutoPage::connected, this, [this](bool connected){
-        this->switchTVInput();
-        // });
+        connect(this->arbiter, &Arbiter::curr_page_changed, this, [this](Page *page){
+            this->switchTVInput();
+        });
         F10_LOG(info)<<"loaded successfully";
         return true;
     }
