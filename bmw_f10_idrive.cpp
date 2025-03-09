@@ -16,7 +16,7 @@ bool BmwF10::init(ICANBus* canbus){
         this->canbus = canbus;
         canbus->registerFrameHandler(0x264, [this](QByteArray payload){this->monitorIdriveRotaryStatus(payload);});
         canbus->registerFrameHandler(0x267, [this](QByteArray payload){this->monitorIdriveButtonStatus(payload);});
-        canbus->registerFrameHandler(0x21A, [this](QByteArray payload){this->monitorGearStatus(payload);});
+        // canbus->registerFrameHandler(0x21A, [this](QByteArray payload){this->monitorGearStatus(payload);});
         // canbus->registerFrameHandler(0x1A1, [this](QByteArray payload){this->monitorVehicleSpeed(payload);});
         // canbus->registerFrameHandler(0x0A5, [this](QByteArray payload){this->monitorEngineRPM(payload);});
         canbus->registerFrameHandler(0x273, [this](QByteArray payload){this->monitorCicStatus(payload);});
@@ -25,9 +25,9 @@ bool BmwF10::init(ICANBus* canbus){
         // connected event was removed :(
         // auto *oaPage = this->arbiter->layout().openauto_page;
         // connect(oaPage, &OpenAutoPage::connected, this, [this](bool connected){
-        connect(this->arbiter, &Arbiter::curr_page_changed, this, [this](Page *page){
-            this->switchTVInput();
-        });
+        // connect(this->arbiter, &Arbiter::curr_page_changed, this, [this](Page *page){
+        //     this->switchTVInput();
+        // });
         F10_LOG(info)<<"loaded successfully";
         return true;
     }
@@ -124,20 +124,20 @@ void BmwF10::monitorIdriveButtonStatus(QByteArray payload){
     this->msgCounter = payload.at(2);
 }
 
-void BmwF10::monitorGearStatus(QByteArray payload){
-    if(payload.at(1)%2 == 1 && !this->inReverse){
+// void BmwF10::monitorGearStatus(QByteArray payload){
+//     if(payload.at(1)%2 == 1 && !this->inReverse){
         // F10_LOG(info)<<"Reverse Gear";
-        this->switchTVInput();
-        this->debug->inReverse->setText(QString("Yes"));
-	    this->inReverse = true;
-        this->arbiter->set_curr_page(3);
-    } else if(payload.at(1)%2 == 0 && this->inReverse){
+//         this->switchTVInput();
+//         this->debug->inReverse->setText(QString("Yes"));
+// 	    this->inReverse = true;
+//         this->arbiter->set_curr_page(3);
+//     } else if(payload.at(1)%2 == 0 && this->inReverse){
 	    // F10_LOG(info)<<"Not reverse";
-        this->debug->inReverse->setText(QString("No"));
-	    this->inReverse = false;
-        this->arbiter->set_curr_page(0);
-    }
-}
+//         this->debug->inReverse->setText(QString("No"));
+// 	    this->inReverse = false;
+//         this->arbiter->set_curr_page(0);
+//    }
+// }
 
 void BmwF10::monitorEngineRPM(QByteArray payload){
     int rpm = ((256.0 * (int)payload.at(6)) + (int)payload.at(5)) / 4.0;
@@ -157,19 +157,19 @@ void BmwF10::monitorCicStatus(QByteArray payload){
     // F10_LOG(info)<<"CIC fullscreen: "<<this->cic_fullscreen;
 }
 
-void BmwF10::switchTVInput(){
-    if (!this->cic_fullscreen) {
+// void BmwF10::switchTVInput(){
+//     if (!this->cic_fullscreen) {
         // F10_LOG(info)<<"Switch to TV source";
-        this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0080")));
-        this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0000")));
-    }
-}
+//         this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0080")));
+//         this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0000")));
+//     }
+// }
 
 DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
 {
     this->setObjectName("IdriveDebug");
 
-    QLabel* textOne = new QLabel("In Reverse", this);
+    QLabel* textOne = new QLabel("In Reverse - Removed", this);
     QLabel* textTwo = new QLabel("RPM", this);
     QLabel* textThree = new QLabel("Rotary Pos", this);
     // QLabel* textFour = new QLabel("Message Counter", this);
