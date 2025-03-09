@@ -48,12 +48,12 @@ class BmwF10 : public QObject, VehiclePlugin
 
         void monitorIdriveRotaryStatus(QByteArray payload);
         void monitorIdriveButtonStatus(QByteArray payload);
-        void monitorGearStatus(QByteArray payload);
+        // void monitorGearStatus(QByteArray payload);
         void monitorEngineRPM(QByteArray payload);
         void monitorVehicleSpeed(QByteArray payload);
         void monitorCicStatus(QByteArray payload);
-        void injectFrame(QByteArray payload);
-        void switchTVInput();
+        // void injectFrame(QByteArray payload);
+        // void switchTVInput();
         // QString toDebug(const QByteArray & line);
 
         AAHandler *aa_handler;
