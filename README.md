@@ -37,6 +37,8 @@ Comment OUT the line "bus->writeFrame(cmd.frame);" in “src/app/pages/vehicle.c
         }
     });
 ```
+# ACTIVATION!!
+* Inside Dash Vehicle page enable the plugin by clicking on Gear in upper right corner and selec SocketCAN then CAN0 and under plugin chose Dash_BMW_CIC 
 
 # Hardware
 
