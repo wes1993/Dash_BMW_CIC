@@ -17,7 +17,7 @@ It is likely that this plugin works with other years of F01/F07F10/F11 or even a
 
 ```
 $ cd ~/dash/plugins/vehicle
-$ git clone https://github.com/egisz/Dash_BMW_Idrive.git
+$ git clone https://github.com/wes1993/Dash_BMW_CIC.git
 ```
 
 * run install script
@@ -25,6 +25,16 @@ $ git clone https://github.com/egisz/Dash_BMW_Idrive.git
 ```
 $ cd ~/dash
 $ install.sh --dash
+```
+#Remember to DISABLE can Messages from dash otherwise the CAR ECUs won't power off.. (Check LED of Start/Stop button)
+Comment OUT the line "bus->writeFrame(cmd.frame);" in “src/app/pages/vehicle.cpp” of Dash Project:
+```
+    this->timer = new QTimer(this);
+    connect(this->timer, &QTimer::timeout, [this, bus, cmds]() {
+        for (auto cmd : cmds) {
+            // bus->writeFrame(cmd.frame);
+        }
+    });
 ```
 
 # Hardware
