@@ -9,7 +9,7 @@
 #include "openauto/Service/InputService.hpp"
 #include "AAHandler.hpp"
 
-#define F10_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[F10VehiclePlugin] "
+#define CIC_LOG(severity) BOOST_LOG_TRIVIAL(severity) << "[CICVehiclePlugin] "
 
 class DebugWindow : public QWidget {
     Q_OBJECT
@@ -25,15 +25,15 @@ class DebugWindow : public QWidget {
 
 };
 
-class BmwF10 : public QObject, VehiclePlugin
+class BMWCIC : public QObject, VehiclePlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID VehiclePlugin_iid)
     Q_INTERFACES(VehiclePlugin)
 
     public:
-        BmwF10() {};
-        ~BmwF10();
+        BMWCIC() {};
+        ~BMWCIC();
         bool init(ICANBus* canbus) override;
 
     private:
@@ -51,7 +51,6 @@ class BmwF10 : public QObject, VehiclePlugin
         void monitorIdriveRotaryStatus(QByteArray payload);
         void monitorIdriveButtonStatus(QByteArray payload);
         // void monitorGearStatus(QByteArray payload);
-        void monitorCICButton(QByteArray payload);
         void monitorEngineRPM(QByteArray payload);
         void monitorVehicleSpeed(QByteArray payload);
         void monitorCicStatus(QByteArray payload);
