@@ -116,10 +116,12 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
             // DOWN hold
             this->lastKey = aasdk::proto::enums::ButtonCode::HOME;
             this->debug->lastKey->setText(QString("Down Hold >> HOME"));
+	    this->debug->KeyLock->setText(QString("Down Hold >> KeyLock"));
 
         } else if(payload.at(3) == 0x02 && payload.at(4) == 0xDD){
 	    // CENTER hold
 	    // Enable Key Block
+	    this->debug->KeyLock->setText(QString("Center Hold >> KeyLock"));
 	    if(!this->KeyLock){
 		this->debug->KeyLock->setText(QString("Yes"));
 	        this->KeyLock = true;
