@@ -145,20 +145,20 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
     this->msgCounter = payload.at(2);
 }
 
-void BMWCIC::monitorGearStatus(QByteArray payload){
-    if(payload.at(1)%2 == 1 && !this->inReverse){
-        // CIC_LOG(info)<<"Reverse Gear";
-        this->switchTVInput();
-        this->debug->inReverse->setText(QString("Yes"));
-	    this->inReverse = true;
-        this->arbiter->set_curr_page(3);
-    } else if(payload.at(1)%2 == 0 && this->inReverse){
-	    // CIC_LOG(info)<<"Not reverse";
-        this->debug->inReverse->setText(QString("No"));
-	    this->inReverse = false;
-        this->arbiter->set_curr_page(0);
-    }
-}
+// void BMWCIC::monitorGearStatus(QByteArray payload){
+//     if(payload.at(1)%2 == 1 && !this->inReverse){
+//         // CIC_LOG(info)<<"Reverse Gear";
+//         this->switchTVInput();
+//         this->debug->inReverse->setText(QString("Yes"));
+// 	    this->inReverse = true;
+//         this->arbiter->set_curr_page(3);
+//     } else if(payload.at(1)%2 == 0 && this->inReverse){
+// 	    // CIC_LOG(info)<<"Not reverse";
+//         this->debug->inReverse->setText(QString("No"));
+// 	    this->inReverse = false;
+//         this->arbiter->set_curr_page(0);
+//     }
+// }
 
 void BMWCIC::monitorEngineRPM(QByteArray payload){
     int rpm = ((256.0 * (int)payload.at(6)) + (int)payload.at(5)) / 4.0;
