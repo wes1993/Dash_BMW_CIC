@@ -41,7 +41,7 @@ class BMWCIC : public QObject, VehiclePlugin
 
         ICANBus* canbus;
         bool cic_fullscreen = false;
-        bool keylock = false;
+        bool KeyLock = false;
         bool inReverse = false;
         int rotaryPrevPos = -1;
         int rotaryPos = -1;
