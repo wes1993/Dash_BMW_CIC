@@ -127,6 +127,7 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
                 this->debug->KeyLock->setText(QString("No"));
 	        this->KeyLock = false;
 	    }
+	}
     }
 
     if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDD && payload.at(3) == 0x02) {
