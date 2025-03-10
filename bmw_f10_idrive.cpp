@@ -25,9 +25,9 @@ bool BmwF10::init(ICANBus* canbus){
         // connected event was removed :(
         // auto *oaPage = this->arbiter->layout().openauto_page;
         // connect(oaPage, &OpenAutoPage::connected, this, [this](bool connected){
-        // connect(this->arbiter, &Arbiter::curr_page_changed, this, [this](Page *page){
-        //     this->switchTVInput();
-        // });
+        connect(this->arbiter, &Arbiter::curr_page_changed, this, [this](Page *page){
+            this->switchTVInput();
+        });
         F10_LOG(info)<<"loaded successfully";
         return true;
     }
@@ -157,13 +157,13 @@ void BmwF10::monitorCicStatus(QByteArray payload){
     // F10_LOG(info)<<"CIC fullscreen: "<<this->cic_fullscreen;
 }
 
-// void BmwF10::switchTVInput(){
-//     if (!this->cic_fullscreen) {
+void BmwF10::switchTVInput(){
+    if (!this->cic_fullscreen) {
         // F10_LOG(info)<<"Switch to TV source";
-//         this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0080")));
-//         this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0000")));
-//     }
-// }
+        this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0080")));
+        this->canbus->writeFrame(QCanBusFrame(0x0A2, QByteArray::fromHex("0000")));
+    }
+}
 
 DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
 {
