@@ -66,10 +66,8 @@ void BMWCIC::monitorIdriveRotaryStatus(QByteArray payload){
         }
         this->debug->rotaryPos->setText(QString::number(this->rotaryPos));
     }
-	
-	
-	if(this->keylock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
-    payload[4] = (uint) 0xFF;
+    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
+        payload[4] = (uint) 0xFF;
     }
 }
 
@@ -120,18 +118,18 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
             this->debug->lastKey->setText(QString("Down Hold >> HOME"));
 
         } else if(payload.at(3) == 0x02 && payload.at(4) == 0xDD){
-            // CENTER hold
-			// Enable Key Block
-			if(!this->keylock){
-                this->debug->keylock->setText(QString("Yes"));
-	            this->keylock = true;
-		    } else if (this->keylock){
-                this->debug->keylock->setText(QString("No"));
-	            this->keylock = false;
-		    }
+	    // CENTER hold
+	    // Enable Key Block
+	    if(!this->KeyLock){
+		this->debug->KeyLock->setText(QString("Yes"));
+	        this->KeyLock = true;
+	    } else if (this->KeyLock){
+                this->debug->KeyLock->setText(QString("No"));
+	        this->KeyLock = false;
+	    }
     }
 
-    if(this->keylock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDD && payload.at(3) == 0x02)) {
+    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDD && payload.at(3) == 0x02) {
         payload[3] = (uint) 0xFF;
         this->canbus->writeFrame(QCanBusFrame(0x267, payload));
     }
@@ -203,7 +201,7 @@ DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
     rotaryPos = new QLabel("--", this);
     // msgCounter = new QLabel("--", this);
     lastKey = new QLabel("--", this);
-	keylock = new QLabel("No", this);
+    KeyLock = new QLabel("No", this);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
@@ -227,7 +225,7 @@ DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
     layout->addWidget(lastKey);
     layout->addWidget(Session::Forge::br(false));
 	
-	layout->addWidget(textSix);
-    layout->addWidget(keylock);
+    layout->addWidget(textSix);
+    layout->addWidget(KeyLock);
     layout->addWidget(Session::Forge::br(false));
 }
