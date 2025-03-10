@@ -1,4 +1,4 @@
-# Dash_BmwF10_Idrive integration
+# Dash_BMW_CIC Integration
 
 This repo contains a Vehicle Plugin for [Dash](https://github.com/OpenDsh/dash/) to support a 2010 BMW F10.
 Short showcase [video](https://www.youtube.com/watch?v=plySBRlPMZQ)
