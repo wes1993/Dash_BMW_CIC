@@ -67,7 +67,8 @@ void BMWCIC::monitorIdriveRotaryStatus(QByteArray payload){
         this->debug->rotaryPos->setText(QString::number(this->rotaryPos));
     }
     if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
-        payload[4] = (uint) 0xFF;
+        payload[3] = (uint) 0xFF;
+	payload[4] = (uint) 0xFF;
 	this->canbus->writeFrame(QCanBusFrame(0x264, payload));
 	this->debug->lastKey->setText(QString("Key Lock Enabled"));
     }
