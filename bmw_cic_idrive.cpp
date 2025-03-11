@@ -67,14 +67,14 @@ void BMWCIC::monitorIdriveRotaryStatus(QByteArray payload){
         this->debug->rotaryPos->setText(QString::number(this->rotaryPos));
     }
 
-    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
+//    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
         // Inject Button press to Disable Rotary Control
-        payload[2] = (uint) 0xFF;
-        payload[3] = (uint) 0xFF;
+//        payload[2] = (uint) 0xFF;
+//        payload[3] = (uint) 0xFF;
 //        payload[5] = (uint) 0x00;
-        this->canbus->writeFrame(QCanBusFrame(0x264, payload));
-        this->debug->lastKey->setText(QString("Key Lock Enabled"));
-    }
+//        this->canbus->writeFrame(QCanBusFrame(0x264, payload));
+//        this->debug->lastKey->setText(QString("Key Lock Enabled"));
+//    }
 
     // if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
         // Inject Button press to Disable Rotary Control
@@ -131,19 +131,21 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
             // DOWN
             this->lastKey = aasdk::proto::enums::ButtonCode::HOME;
             this->debug->lastKey->setText(QString("Down Hold >> HOME"));
-        } else if(payload.at(3) == 0x21 && payload.at(4) == 0xDD){
+        } 
+	//else if(payload.at(3) == 0x21 && payload.at(4) == 0xDD){
             // RIGHT
-            this->lastKey = aasdk::proto::enums::ButtonCode::RIGHT;
-            this->debug->lastKey->setText(QString("RIGHT"));
-        } else if(payload.at(3) == 0x81 && payload.at(4) == 0xDD){
+        //    this->lastKey = aasdk::proto::enums::ButtonCode::RIGHT;
+        //    this->debug->lastKey->setText(QString("RIGHT"));
+        //} else if(payload.at(3) == 0x81 && payload.at(4) == 0xDD){
             // LEFT
-            this->lastKey = aasdk::proto::enums::ButtonCode::LEFT;
-            this->debug->lastKey->setText(QString("LEFT"));
-        } else if(payload.at(3) == 0x01 && payload.at(4) == 0xDD){
+        //    this->lastKey = aasdk::proto::enums::ButtonCode::LEFT;
+        //    this->debug->lastKey->setText(QString("LEFT"));
+        //} else if(payload.at(3) == 0x01 && payload.at(4) == 0xDD){
             // Center
-	    this->lastKey = aasdk::proto::enums::ButtonCode::ENTER;
-            this->debug->lastKey->setText(QString("Center >> Enter"));
-        } else if(payload.at(3) == 0x02 && payload.at(4) == 0xDE){
+	//    this->lastKey = aasdk::proto::enums::ButtonCode::ENTER;
+        //    this->debug->lastKey->setText(QString("Center >> Enter"));
+        //} 
+        else if(payload.at(3) == 0x02 && payload.at(4) == 0xDE){
 	    // CENTER hold
 	    // Enable Key Block
 	    if(!this->KeyLock){
@@ -162,12 +164,12 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
 	this->debug->lastKey->setText(QString("Key Lock Enabled"));
     }
 
-    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDE && (payload.at(3) == 0x01 || payload.at(3) == 0x02)) {
-        payload[3] = (uint) 0xFF;
+    //if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDE && (payload.at(3) == 0x01 || payload.at(3) == 0x02)) {
+    //    payload[3] = (uint) 0xFF;
 	//payload[5] = (uint) 0xFF;
-        this->canbus->writeFrame(QCanBusFrame(0x267, payload));
-	this->debug->lastKey->setText(QString("Key Lock Enabled"));
-    }
+    //    this->canbus->writeFrame(QCanBusFrame(0x267, payload));
+    //    this->debug->lastKey->setText(QString("Key Lock Enabled"));
+    //}
 	
     if(payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDD &&
         (payload.at(3) == 0x41 || payload.at(3) == 0x11 || payload.at(3) == 0x12 || payload.at(3) == 0x42)) {
@@ -176,6 +178,19 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
     }
 
     this->msgCounter = payload.at(2);
+}
+
+
+void BMWCIC::monitorSteeringWheelButtonStatus(QByteArray payload){
+    if(payload.at(0) == 0xE0 && payload.at(1) == 0x0C){
+            // Steering Wheel UP -> PREV
+	this->lastKey = aasdk::proto::enums::ButtonCode::PREV;
+        this->debug->lastKey->setText(QString("SteeringWheelUP >> PREV"));
+    } else if(payload.at(0) == 0xD0 && payload.at(1) == 0x0C){
+            // Steering Wheel DOWN -> NEXT
+            this->lastKey = aasdk::proto::enums::ButtonCode::NEXT;
+            this->debug->lastKey->setText(QString("SteeringWheelDOWN >> NEXT"));
+    }
 }
 
 // void BMWCIC::monitorGearStatus(QByteArray payload){
