@@ -164,7 +164,7 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
 
     if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDE && (payload.at(3) == 0x01 || payload.at(3) == 0x02)) {
         payload[3] = (uint) 0xFF;
-	payload[5] = (uint) 0xFF;
+	//payload[5] = (uint) 0xFF;
         this->canbus->writeFrame(QCanBusFrame(0x267, payload));
 	this->debug->lastKey->setText(QString("Key Lock Enabled"));
     }
