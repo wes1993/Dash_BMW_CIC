@@ -66,14 +66,14 @@ void BMWCIC::monitorIdriveRotaryStatus(QByteArray payload){
         }
         this->debug->rotaryPos->setText(QString::number(this->rotaryPos));
     }
-    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
+    // if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
         // Inject Button press to Disable Rotary Control
-	payload[3] = (uint) 0xFF;
-	payload[4] = (uint) 0xDD;
-	payload[5] = (uint) 0x00;
-	this->canbus->writeFrame(QCanBusFrame(0x267, payload));
-	this->debug->lastKey->setText(QString("Key Lock Enabled"));
-    }
+    //     payload[3] = (uint) 0x00;
+    //     payload[4] = (uint) 0xDD;
+    //     payload[5] = (uint) 0x00;
+    //     this->canbus->writeFrame(QCanBusFrame(0x264, payload));
+    //     this->debug->lastKey->setText(QString("Key Lock Enabled"));
+    // }
 }
 
 // Idrive buttons
@@ -96,7 +96,7 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
         } else if(payload.at(3) == 0x11 && payload.at(4) == 0xDD){
             // UP -> Enter
             // CIC_LOG(info)<<"Up -> Enter";
-	        this->lastKey = aasdk::proto::enums::ButtonCode::ENTER;
+	    this->lastKey = aasdk::proto::enums::ButtonCode::ENTER;
             this->debug->lastKey->setText(QString("Enter"));
         // } else if(payload.at(3) == 0x11 && payload.at(4) == 0xDD){
         } else if(payload.at(3) == 0x12 && payload.at(4) == 0xDD){
@@ -118,10 +118,21 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
             this->lastKey = aasdk::proto::enums::ButtonCode::DOWN;
             this->debug->lastKey->setText(QString("Down"));
         } else if(payload.at(3) == 0x42 && payload.at(4) == 0xDD){
-            // DOWN hold
+            // DOWN
             this->lastKey = aasdk::proto::enums::ButtonCode::HOME;
             this->debug->lastKey->setText(QString("Down Hold >> HOME"));
-
+        } else if(payload.at(3) == 0x21 && payload.at(4) == 0xDD){
+            // RIGHT
+            this->lastKey = aasdk::proto::enums::ButtonCode::RIGHT;
+            this->debug->lastKey->setText(QString("RIGHT"));
+        } else if(payload.at(3) == 0x81 && payload.at(4) == 0xDD){
+            // LEFT
+            this->lastKey = aasdk::proto::enums::ButtonCode::LEFT;
+            this->debug->lastKey->setText(QString("LEFT"));
+        } else if(payload.at(3) == 0x01 && payload.at(4) == 0xDD){
+            // Center
+	    this->lastKey = aasdk::proto::enums::ButtonCode::ENTER;
+            this->debug->lastKey->setText(QString("Center >> Enter"));
         } else if(payload.at(3) == 0x02 && payload.at(4) == 0xDE){
 	    // CENTER hold
 	    // Enable Key Block
@@ -135,12 +146,18 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
 	}
     }
 
-    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && (payload.at(4) == 0xDE || payload.at(4) == 0xDD) && (payload.at(3) == 0x01 || payload.at(3) == 0x02 || payload.at(3) == 0x81)) {
+    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDD && (payload.at(3) == 0x21 || payload.at(3) == 0x81)) {
         payload[3] = (uint) 0xFF;
         this->canbus->writeFrame(QCanBusFrame(0x267, payload));
 	this->debug->lastKey->setText(QString("Key Lock Enabled"));
     }
-	
+
+    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDE && (payload.at(3) == 0x01 || payload.at(3) == 0x02)) {
+        payload[3] = (uint) 0xFF;
+	payload[5] = (uint) 0xFF;
+        this->canbus->writeFrame(QCanBusFrame(0x267, payload));
+	this->debug->lastKey->setText(QString("Key Lock Enabled"));
+    }
 	
     if(payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(4) == 0xDD &&
         (payload.at(3) == 0x41 || payload.at(3) == 0x11 || payload.at(3) == 0x12 || payload.at(3) == 0x42)) {
