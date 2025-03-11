@@ -16,6 +16,7 @@ bool BMWCIC::init(ICANBus* canbus){
         this->canbus = canbus;
         canbus->registerFrameHandler(0x264, [this](QByteArray payload){this->monitorIdriveRotaryStatus(payload);});
         canbus->registerFrameHandler(0x267, [this](QByteArray payload){this->monitorIdriveButtonStatus(payload);});
+	canbus->registerFrameHandler(0x1D6, [this](QByteArray payload){this->monitorSteeringWheelButtonStatus(payload);});
         // canbus->registerFrameHandler(0x21A, [this](QByteArray payload){this->monitorGearStatus(payload);});
         // canbus->registerFrameHandler(0x1A1, [this](QByteArray payload){this->monitorVehicleSpeed(payload);});
         // canbus->registerFrameHandler(0x0A5, [this](QByteArray payload){this->monitorEngineRPM(payload);});
