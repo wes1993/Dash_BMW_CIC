@@ -67,9 +67,11 @@ void BMWCIC::monitorIdriveRotaryStatus(QByteArray payload){
         this->debug->rotaryPos->setText(QString::number(this->rotaryPos));
     }
     if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && payload.at(5) == 0x1E) {
-        payload[3] = (uint) 0xFF;
-	payload[4] = (uint) 0xFF;
-	this->canbus->writeFrame(QCanBusFrame(0x264, payload));
+        // Inject Button press to Disable Rotary Control
+	payload[3] = (uint) 0xFF;
+	payload[4] = (uint) 0xDD;
+	payload[5] = (uint) 0x00;
+	this->canbus->writeFrame(QCanBusFrame(0x267, payload));
 	this->debug->lastKey->setText(QString("Key Lock Enabled"));
     }
 }
@@ -133,7 +135,7 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
 	}
     }
 
-    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && (payload.at(4) == 0xDE || payload.at(4) == 0xDD) && (payload.at(3) == 0x02 || payload.at(3) == 0x81)) {
+    if(this->KeyLock && payload.at(0) == 0xE1 && payload.at(1) == 0xFD && (payload.at(4) == 0xDE || payload.at(4) == 0xDD) && (payload.at(3) == 0x01 || payload.at(3) == 0x02 || payload.at(3) == 0x81)) {
         payload[3] = (uint) 0xFF;
         this->canbus->writeFrame(QCanBusFrame(0x267, payload));
 	this->debug->lastKey->setText(QString("Key Lock Enabled"));
