@@ -185,12 +185,12 @@ void BMWCIC::monitorIdriveButtonStatus(QByteArray payload){
 void BMWCIC::monitorSteeringWheelButtonStatus(QByteArray payload){
     if(payload.at(0) == 0xE0 && payload.at(1) == 0x0C){
             // Steering Wheel UP -> PREV
-	this->lastKey = aasdk::proto::enums::ButtonCode::PREV;
+	this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::PREV);
         this->debug->lastKey->setText(QString("SteeringWheelUP >> PREV"));
     } else if(payload.at(0) == 0xD0 && payload.at(1) == 0x0C){
-            // Steering Wheel DOWN -> NEXT
-            this->lastKey = aasdk::proto::enums::ButtonCode::NEXT;
-            this->debug->lastKey->setText(QString("SteeringWheelDOWN >> NEXT"));
+        // Steering Wheel DOWN -> NEXT
+	this->aa_handler->injectButtonPress(aasdk::proto::enums::ButtonCode::NEXT);
+        this->debug->lastKey->setText(QString("SteeringWheelDOWN >> NEXT"));
     }
 }
 
