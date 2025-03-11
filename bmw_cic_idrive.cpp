@@ -192,45 +192,46 @@ void BMWCIC::switchTVInput(){
 
 DebugWindow::DebugWindow(Arbiter &arbiter, QWidget *parent) : QWidget(parent)
 {
-    this->setObjectName("IdriveDebug");
+    this->setObjectName("Dash CIC Debug");
 
-    QLabel* textOne = new QLabel("In Reverse", this);
-    QLabel* textTwo = new QLabel("RPM", this);
+    QLabel* textOne = new QLabel("Last Key", this);
+    QLabel* textTwo = new QLabel("KeyLock", this);
     QLabel* textThree = new QLabel("Rotary Pos", this);
+    QLabel* textFour = new QLabel("RPM", this);
+    QLabel* textFive = new QLabel("In Reverse", this);
     // QLabel* textFour = new QLabel("Message Counter", this);
-    QLabel* textFive = new QLabel("Last Key", this);
-    QLabel* textSix = new QLabel("KeyLock", this);
 
-    inReverse = new QLabel("No", this);
-    rpm = new QLabel("--", this);
-    rotaryPos = new QLabel("--", this);
-    // msgCounter = new QLabel("--", this);
     lastKey = new QLabel("--", this);
     KeyLock = new QLabel("No", this);
+    rotaryPos = new QLabel("--", this);
+    rpm = new QLabel("--", this);
+    inReverse = new QLabel("No", this);
+    // msgCounter = new QLabel("--", this);
+
 
     QVBoxLayout *layout = new QVBoxLayout(this);
 
     layout->addWidget(textOne);
-    layout->addWidget(inReverse);
+    layout->addWidget(lastKey);
     layout->addWidget(Session::Forge::br(false));
-
+	
     layout->addWidget(textTwo);
-    layout->addWidget(rpm);
+    layout->addWidget(KeyLock);
     layout->addWidget(Session::Forge::br(false));
 
     layout->addWidget(textThree);
     layout->addWidget(rotaryPos);
     layout->addWidget(Session::Forge::br(false));
 
+    layout->addWidget(textFour);
+    layout->addWidget(rpm);
+    layout->addWidget(Session::Forge::br(false));
+	
+    layout->addWidget(textFive);
+    layout->addWidget(inReverse);
+    layout->addWidget(Session::Forge::br(false));
+
     // layout->addWidget(textFour);
     // layout->addWidget(msgCounter);
     // layout->addWidget(Session::Forge::br(false));
-
-    layout->addWidget(textFive);
-    layout->addWidget(lastKey);
-    layout->addWidget(Session::Forge::br(false));
-	
-    layout->addWidget(textSix);
-    layout->addWidget(KeyLock);
-    layout->addWidget(Session::Forge::br(false));
 }
