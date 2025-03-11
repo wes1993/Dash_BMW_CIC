@@ -171,11 +171,11 @@ void BMWCIC::monitorEngineRPM(QByteArray payload){
     // this->arbiter->vehicle_update_data("rpm", rpm);
 }
 
-void BMWCIC::monitorVehicleSpeed(QByteArray payload){
-    int speed = ((256.0 * (int)payload.at(3)) + (int)payload.at(2)) * 1.609344 / 100.0;
+// void BMWCIC::monitorVehicleSpeed(QByteArray payload){
+//     int speed = ((256.0 * (int)payload.at(3)) + (int)payload.at(2)) * 1.609344 / 100.0;
     // CIC_LOG(info)<<"Speed: "<<std::to_string(speed);
     // this->arbiter->vehicle_update_data("speed", speed);
-}
+// }
 
 void BMWCIC::monitorCicStatus(QByteArray payload){
     this->cic_fullscreen = payload.at(0) == 0x5D;
