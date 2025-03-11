@@ -52,7 +52,7 @@ class BMWCIC : public QObject, VehiclePlugin
         void monitorIdriveButtonStatus(QByteArray payload);
         // void monitorGearStatus(QByteArray payload);
         void monitorEngineRPM(QByteArray payload);
-        void monitorVehicleSpeed(QByteArray payload);
+        // void monitorVehicleSpeed(QByteArray payload);
         void monitorCicStatus(QByteArray payload);
         void injectFrame(QByteArray payload);
         void switchTVInput();
